@@ -25,6 +25,7 @@ class Gauss_Weapons (ttk.Frame):
     BayonetLug = int()
     Grenade = int()
     Silenced = int()
+    WeaponTypeVar =str()
     
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent)
@@ -63,12 +64,27 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for Tech Level
         self.TechLevel = tk.IntVar()
-        self.TechLevelBox = ttk.Combobox(self, width=12, textvariable=self.TechLevel)
+        self.TechLevelBox = ttk.Combobox(self, width=12, textvariable=self.TechLevel,\
+                                         state='readonly')
         self.TechLevelBox['values'] = (10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
         self.TechLevelBox.grid(in_=self.CommonInfo, column=1, row=2, padx=10, pady=5)
         self.TechLevelBox.current(0)
-        self.TechLevelBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() ) 
+        self.TechLevelBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
 
+         # Weapon type raido button
+        self.WeaponTypeVar = tk.StringVar(value="1")
+
+        self.radWeaponType1 = tk.Radiobutton(self, text="Pistol", \
+                                           variable=self.WeaponTypeVar, value="Pistol", \
+                                           command= lambda : Set_Outputs())
+        self.radWeaponType1.grid(in_=self.CommonInfo, column=0, row=3, sticky=tk.W, \
+                               padx=10, pady=5)
+        
+        self.radWeaponType2 = tk.Radiobutton(self, text="Longarm - needs two hands", \
+                                           variable=self.WeaponTypeVar, value="Longarm", \
+                                           command= lambda: Set_Outputs())
+        self.radWeaponType2.grid(in_=self.CommonInfo, column=1, row=3, sticky=tk.W, \
+                               padx=10, pady=5)
 
 #======================
 # ammo data Frame
@@ -183,7 +199,8 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for Rate of Fire
         self.RateofFire = tk.StringVar()
-        self.RateofFireBox = ttk.Combobox(self, width=12, textvariable=self.RateofFire)
+        self.RateofFireBox = ttk.Combobox(self, width=12, textvariable=self.RateofFire,\
+                                          state='readonly')
         self.RateofFireBox['values'] = ('SA', '5', '10', '5/10', '50')
         self.RateofFireBox.grid(in_=self.WeaponInfo, column=1, row=2, padx=10, pady=5)
         self.RateofFireBox.current(0)
@@ -197,7 +214,8 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for magazine type
         self.MagazineType = tk.StringVar()
-        self.MagazineTypeBox = ttk.Combobox(self, textvariable=self.MagazineType)
+        self.MagazineTypeBox = ttk.Combobox(self, textvariable=self.MagazineType\
+                                            , state='readonly')
         self.MagazineTypeBox['values'] = ('Grip Magazine', 'Box Magazine', 'Cassette')
         self.MagazineTypeBox.grid(in_=self.WeaponInfo, column=1, row=4, padx=10, pady=5)
         self.MagazineTypeBox.current(0)
@@ -205,7 +223,8 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for Stock type
         self.StockType = tk.StringVar()
-        self.StockTypeBox = ttk.Combobox(self, textvariable=self.StockType)
+        self.StockTypeBox = ttk.Combobox(self, textvariable=self.StockType,\
+                                         state='readonly')
         self.StockTypeBox['values'] = ('Pistol grip', 'Hollow pistol grip', 'Rifle stock',\
                                        'Bullpup rifle stock')
         self.StockTypeBox.grid(in_=self.WeaponInfo, column=1, row=5, padx=10, pady=5)
@@ -214,7 +233,8 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for Sights
         self.SightType = tk.StringVar()
-        self.SightTypeBox = ttk.Combobox(self, textvariable=self.SightType)
+        self.SightTypeBox = ttk.Combobox(self, textvariable=self.SightType\
+                                         ,state='readonly')
         self.SightTypeBox['values'] = ('Iron sights', 'Optic sights', 'Telescopic sights',\
                                        'Electronic sights', 'Laser sights')
         self.SightTypeBox.grid(in_=self.WeaponInfo, column=1, row=6, padx=10, pady=5)
@@ -231,12 +251,14 @@ class Gauss_Weapons (ttk.Frame):
 
         # Adding a Combo box widget for Recoil Compenators
         self.RecoilComp = tk.StringVar()
-        self.RecoilCompBox = ttk.Combobox(self, width=24, textvariable=self.RecoilComp)
+        self.RecoilCompBox = ttk.Combobox(self, width=24, textvariable=self.RecoilComp,\
+                                          state='readonly')
         self.RecoilCompBox['values'] = ('None', 'Gyroscopic Compensator',\
                                         'Inertial Compensator')
         self.RecoilCompBox.grid(in_=self.WeaponInfo, column=1, row=8, padx=10, pady=5)
         self.RecoilCompBox.current(0)
         self.RecoilCompBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
+
 
 
 #======================
@@ -354,10 +376,136 @@ class Gauss_Weapons (ttk.Frame):
                                  sticky= "NWES", padx=10, pady=10, \
                                  columnspan =2, rowspan=10)
 
+
 #======================
-# widgets
+# Errors Frame
 #======================
 
+
+        self.ErrorsInfo = ttk.LabelFrame(self, text="Design Errors")
+        self.ErrorsInfo.grid(column=2, row=3, rowspan=1, \
+                              sticky= "NWES", padx=10, pady=10)
+
+
+        #======================
+        # Labels
+        #======================
+
+
+
+        # MuzzleVelocity warning label
+        self.MuzzleVelocityError_label = ttk.Label\
+                               (self, text="Muzzle Velocity must be no greater than 6000 m/s")
+
+        # Grip magazine size warning label
+        self.GripMagMaxRoundsError_label = ttk.Label\
+                               (self)
+
+        # Grip magazine lenght warning label
+        self.GripMagLenghtError_label = ttk.Label\
+                               (self,text="Rounds too long for grip magazine use box magazine instead" )
+
+
+        # Max Ammo diameter warning label
+        self.MaxAmmoDiameterError_label = ttk.Label\
+                               (self,text="Maximum ammo diameter 20mm" )
+        
+        # Box magazine size warning label
+        self.BoxMagCapError_label = ttk.Label\
+                               (self)
+
+        # MuzzleVelocity warning label
+        self.SightTypeError_label = ttk.Label\
+                               (self, text="Can not fit that type of sight to a one handed weapon")
+
+
+
+        #======================
+        # widgets
+        #======================
+
+
+
+        def Design_Error_Checks():
+
+            #disables recoil comps for pistol weapons
+
+            if Gauss_Weapons.WeaponTypeVar == "Pistol":
+                self.RecoilCompBox.configure(state='disabled')
+                self.RecoilAbsorbBox.configure(state='disabled')
+            else:
+                self.RecoilCompBox.configure(state='readonly')
+                self.RecoilAbsorbBox.configure(state='readonly')
+
+            #excess muzzle velocity warning
+
+            if Gauss_Weapons.MuzzleVelocity > 6000:
+                self.MuzzleVelocityError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+            else:
+                self.MuzzleVelocityError_label.grid_forget()
+
+            # max ammo diameter   
+
+            if  Gauss_Weapons.AmmoDiameter > 20.0:
+                self.MaxAmmoDiameterError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+            else:
+                self.MaxAmmoDiameterError_label.grid_forget()
+
+            #excess rounds in grip mag warning
+
+            GripMagazineCap= 140/Gauss_Weapons.AmmoDiameter
+
+            if (Gauss_Weapons.MagazineType =="Grip Magazine") and \
+               (Gauss_Weapons.MagazineCap > GripMagazineCap):
+                self.GripMagMaxRoundsError_label.configure(text="Too many rounds in grip magazine max rounds are "\
+                                                 +str(int(GripMagazineCap))) 
+                self.GripMagMaxRoundsError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+            else:
+                self.GripMagMaxRoundsError_label.grid_forget()
+
+            # rounds too long for grip magazines    
+
+            if (Gauss_Weapons.MagazineType =="Grip Magazine") and \
+               (Gauss_Weapons.AmmoDiameter*5 > 60):
+                self.GripMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+            else:
+                self.GripMagLenghtError_label.grid_forget()
+
+            # max rounds for box magazines
+
+            AmmoWeight =0.02*math.pi*pow((Gauss_Weapons.AmmoDiameter/2),3)
+
+            if (Gauss_Weapons.MagazineType == "Box Magazine"):
+                if (Gauss_Weapons.MagazineCap > 100) and (AmmoWeight > 15):
+                    self.BoxMagCapError_label.configure(text="Max capacity 100 rounds")
+                    self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+                elif (Gauss_Weapons.MagazineCap > 200) and (AmmoWeight < 15):
+                    self.BoxMagCapError_label.configure(text="Max capacity 200 rounds")
+                    self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+                else:
+                    self.BoxMagCapError_label.grid_forget()
+
+
+            #wrong sight types warnings
+
+            if ((Gauss_Weapons.SightType == "Telescopic sights") or\
+               (Gauss_Weapons.SightType == "Electronic sights")) and  Gauss_Weapons.WeaponTypeVar == "Pistol":
+                self.SightTypeError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+            else:
+                self.SightTypeError_label.grid_forget()
+
+               
+
+
+
+                
 
         def Set_Outputs():
             Gauss_Weapons.TechLevel =self.TechLevel.get()
@@ -376,9 +524,17 @@ class Gauss_Weapons (ttk.Frame):
             Gauss_Weapons.BayonetLug = self.BayonetLug.get()
             Gauss_Weapons.Grenade = self.Grenade.get()
             Gauss_Weapons.Silenced = self.Silenced.get()
+            Gauss_Weapons.WeaponTypeVar =self.WeaponTypeVar.get()
+            Design_Error_Checks ()
             Gauss_Weapons_Calcs ()
             self.FinalDesignBox.delete('1.0', 'end')
             self.FinalDesignBox.insert('1.0', Gauss_Weapons_Calcs.FinalDesign)
+
+
+
+
+
+                
 
 class Gauss_Weapons_Calcs ():
 
@@ -1292,7 +1448,7 @@ class Gauss_Weapons_Calcs ():
         else: SilencedTranqLine =""
 
         
-        # damgae table output assembled 
+        # damage table output assembled 
         DamageTableOutput = DamageTableheaders + '\n' + DartLine + '\n' \
                             +BipodDartLine + TripodDartLine + SilencedDartLine + HELine + '\n' \
                             +BipodHELine + TripodHELine + SilencedHELine + HEAPLine + '\n' \
