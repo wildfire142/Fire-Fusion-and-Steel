@@ -418,6 +418,10 @@ class Gauss_Weapons (ttk.Frame):
         self.SightTypeError_label = ttk.Label\
                                (self, text="Can not fit that type of sight to a one handed weapon")
 
+        # Box mag max lenght warning label
+        self.BoxMagLenghtError_label = ttk.Label\
+                               (self,text="Receiver lenght too short for a box magazine" )
+
 
 
         #======================
@@ -459,7 +463,7 @@ class Gauss_Weapons (ttk.Frame):
 
             if (Gauss_Weapons.MagazineType =="Grip Magazine") and \
                (Gauss_Weapons.MagazineCap > GripMagazineCap):
-                self.GripMagMaxRoundsError_label.configure(text="Too many rounds in grip magazine max rounds are "\
+                self.GripMagMaxRoundsError_label.configure(text="Too many rounds in grip magazine max rounds equals"\
                                                  +str(int(GripMagazineCap))) 
                 self.GripMagMaxRoundsError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=10, pady=5)
@@ -477,20 +481,29 @@ class Gauss_Weapons (ttk.Frame):
 
             # max rounds for box magazines
 
-            AmmoWeight =0.02*math.pi*pow((Gauss_Weapons.AmmoDiameter/2),3)
-
             if (Gauss_Weapons.MagazineType == "Box Magazine"):
-                if (Gauss_Weapons.MagazineCap > 100) and (AmmoWeight > 15):
+                if (Gauss_Weapons.MagazineCap > 100) and \
+                   (Gauss_Weapons_Calcs.GaussAmmoWeight > 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 100 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=10, pady=5)
-                elif (Gauss_Weapons.MagazineCap > 200) and (AmmoWeight < 15):
+                elif (Gauss_Weapons.MagazineCap > 200) and \
+                     (Gauss_Weapons_Calcs.GaussAmmoWeight < 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 200 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=10, pady=5)
                 else:
                     self.BoxMagCapError_label.grid_forget()
+            else:
+                self.BoxMagCapError_label.grid_forget()
 
+            #reciver too short for box mag warnings
+            if (Gauss_Weapons.MagazineType == "Box Magazine"):
+                if ((Gauss_Weapons.AmmoDiameter*5)+150) >(Gauss_Weapons_Calcs.RecieverLenght*10):
+                    self.BoxMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+                                    sticky= "W", padx=10, pady=5)
+                else:
+                    self.BoxMagLenghtError_label.grid_forget()
 
             #wrong sight types warnings
 
@@ -502,10 +515,8 @@ class Gauss_Weapons (ttk.Frame):
                 self.SightTypeError_label.grid_forget()
 
                
-
-
-
-                
+            
+ 
 
         def Set_Outputs():
             Gauss_Weapons.TechLevel =self.TechLevel.get()
@@ -525,8 +536,8 @@ class Gauss_Weapons (ttk.Frame):
             Gauss_Weapons.Grenade = self.Grenade.get()
             Gauss_Weapons.Silenced = self.Silenced.get()
             Gauss_Weapons.WeaponTypeVar =self.WeaponTypeVar.get()
-            Design_Error_Checks ()
             Gauss_Weapons_Calcs ()
+            Design_Error_Checks ()
             self.FinalDesignBox.delete('1.0', 'end')
             self.FinalDesignBox.insert('1.0', Gauss_Weapons_Calcs.FinalDesign)
 
@@ -538,7 +549,9 @@ class Gauss_Weapons (ttk.Frame):
 
 class Gauss_Weapons_Calcs ():
 
-    FinalDesign = "newstuff"
+    FinalDesign = str()
+    GaussAmmoWeight = float()
+    RecieverLenght =float()
     
     def __init__(self,):
         
@@ -680,11 +693,30 @@ class Gauss_Weapons_Calcs ():
 
         BatteryWeight = MagazineCap * RequiredEnergy * BatteryTLMods [TechLevel-10] #in kg
 
-        if MagazineType == "Cassette":
-            MagazineEmptyWeight = 2 + BatteryWeight
-        else: #all other magazine types
-            MagazineEmptyWeight = (0.0006 * ((MagazineCap+4) * \
-                                             GaussAmmoWeight))+ BatteryWeight
+        if RateofFire == 'SA':
+            RoundsPerTurn = 1
+        elif RateofFire == '5':
+            RoundsPerTurn = 5
+        elif RateofFire == '10':
+            RoundsPerTurn = 10
+        elif RateofFire == '5/10':
+            RoundsPerTurn = 5
+        else: # rate of fire 50
+            RoundsPerTurn = 50
+
+        if MountType == "Vehicle":
+            if MagazineType == "Cassette":
+                MagazineEmptyWeight = 2
+                VehiclePower = ((MagazineCap * RequiredEnergy)/1000000)/(MagazineCap/RoundsPerTurn)
+            else: #all other magazine types
+                MagazineEmptyWeight = (0.0006 * ((MagazineCap+4) * \
+                                                 GaussAmmoWeight))+ BatteryWeight
+        else: #non vehicle mounts
+            if MagazineType == "Cassette":
+                MagazineEmptyWeight = 2 + BatteryWeight
+            else: #all other magazine types
+                MagazineEmptyWeight = (0.0006 * ((MagazineCap+4) * \
+                                                 GaussAmmoWeight))+ BatteryWeight
 
         MagazineLoadedWeight = MagazineEmptyWeight + \
                                (MagazineCap*(GaussAmmoWeight/1000)) #in kg
@@ -1263,14 +1295,14 @@ class Gauss_Weapons_Calcs ():
         WeaponWeightLine = "Weapon Weight: " + str(FinalLoadedWeight) + " kg loaded, " + \
                            str(FinalEmptyWeight) + " kg empty (includes weight of empty "\
                            + MagazineType + ")"
-        WeaponPriceLine = "Weapon Price: Cr" + str(FinalPrice)
+        WeaponPriceLine = "Weapon Price: Cr" + str(round(FinalPrice,2))
         MagazineWeightLine = "Magazine Weight: " + str(MagazineLoadedWeight) +" kg loaded, "\
                              + str(MagazineEmptyWeight) + " kg empty"
         MagazinePriceLine = "Magazine Price: Cr" + str(MagazineLoadedPrice) + " (loaded), Cr" \
                             + str(MagazinePrice) + " (empty)" 
-        AmmunitionPriceLine = "Ammunition Price: Cr" + str(GaussAmmoPrice) + " (Dart), Cr"\
-                              + str(2*GaussAmmoPrice) + " (HE, Tranq), Cr" \
-                              +str(3*GaussAmmoPrice)+ " (HEAP)"
+        AmmunitionPriceLine = "Ammunition Price: Cr" + str(round(GaussAmmoPrice,2)) + " (Dart), Cr"\
+                              + str(round(2*GaussAmmoPrice,2)) + " (HE, Tranq), Cr" \
+                              +str(round(3*GaussAmmoPrice,2))+ " (HEAP)"
         AmmunitionWeightLine = "Ammunition Weight: " + str(GaussAmmoWeight) + " grams per round"
         FeaturesLine = "Features: " + Options
         if MountType == "Tripod":
@@ -1301,6 +1333,11 @@ class Gauss_Weapons_Calcs ():
         SilencedTranqShortRange = str(int(round(SilencedFinalTranqRange,0))) \
                           + "("+str(int(round(SilencedBaseTranqRange,0)))+")"
 
+        if MagazineType == "cassette":
+            MagazineListing = str(MagazineCap) + "C"
+        else:
+            MagazineListing = str(MagazineCap)
+
         #damage table headers
         AmmoBase = str(AmmoDiameter)+'x'+str(GaussAmmoLenght)+"mm/"+str(AmmoVelocity)
         DamageTableheaders = "Round".ljust(20) +"ROF".ljust(6)+ "Dam Val".center(10)+ \
@@ -1312,24 +1349,24 @@ class Gauss_Weapons_Calcs ():
         if MountType == "Vehicle":
             DartLine =(AmmoBase+" Dart").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
-                   "0".center(11) + "0".center(14) + MountShortRange.center(13) + '\n'
+                   + Bulk.center(8) + MagazineListing.center(10) + \
+                   "0".center(11) + "0".center(14) + MountShortRange.center(13)
         else: DartLine = (AmmoBase+" Dart").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + ShortRange.center(13)
         if MountType == "Bipod":
             BipodDartLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountShortRange.center(13) + '\n'
         else: BipodDartLine =""
         if MountType == "Tripod":                                           
             TripodDartLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) +\
+                   + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountShortRange.center(13) + '\n'
         else: TripodDartLine =""
@@ -1337,7 +1374,7 @@ class Gauss_Weapons_Calcs ():
             SilencedDartLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedBaseDamageValue,0))).center(10) + \
                    SilencedPenetration.center(10) + Bulk.center(8) + \
-                   str(MagazineCap).center(10) +\
+                   MagazineListing.center(10) +\
                    str(int(round(SilencedSSRecoil,0))).center(11)\
                    + str(SilencedBurstRecoil).center(14) + \
                    SilencedShortRange.center(13) + '\n'
@@ -1347,24 +1384,24 @@ class Gauss_Weapons_Calcs ():
         if MountType == "Vehicle":
             HELine =(AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
-                   "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13) + '\n'
+                   + Bulk.center(8) + MagazineListing.center(10) + \
+                   "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13)
         else: HELine = (AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + HEAPShortRange.center(13)
         if MountType == "Bipod":
             BipodHELine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: BipodHELine =""
         if MountType == "Tripod":                                           
             TripodHELine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) +\
+                   + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: TripodHELine =""
@@ -1372,7 +1409,7 @@ class Gauss_Weapons_Calcs ():
             SilencedHELine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedHEAPDamageValue,0))).center(10) + \
                    "Nil".center(10)+ Bulk.center(8) + \
-                   str(MagazineCap).center(10) +\
+                   MagazineListing.center(10) +\
                    str(int(round(SilencedSSRecoil,0))).center(11)\
                    + str(SilencedBurstRecoil).center(14) + \
                    SilencedHEAPShortRange.center(13) + '\n'
@@ -1380,26 +1417,26 @@ class Gauss_Weapons_Calcs ():
 
         #HEAP ammo damge ouput
         if MountType == "Vehicle":
-            HEAPLine =(AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
+            HEAPLine =(AmmoBase+" HEAP").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
-                   "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13) + '\n'
-        else: HEAPLine = (AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
+                   "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13)
+        else: HEAPLine = (AmmoBase+" HEAP").ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + HEAPShortRange.center(13)
         if MountType == "Bipod":
             BipodHEAPLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: BipodHEAPLine =""
         if MountType == "Tripod":                                           
             TripodHEAPLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) +\
+                   + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: TripodHEAPLine =""
@@ -1407,7 +1444,7 @@ class Gauss_Weapons_Calcs ():
             SilencedHEAPLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedHEAPDamageValue,0))).center(10) + \
                    "2-2-2".center(10)+ Bulk.center(8) + \
-                   str(MagazineCap).center(10) +\
+                   MagazineListing.center(10) +\
                    str(int(round(SilencedSSRecoil,0))).center(11)\
                    + str(SilencedBurstRecoil).center(14) + \
                    SilencedHEAPShortRange.center(13) + '\n'
@@ -1417,43 +1454,58 @@ class Gauss_Weapons_Calcs ():
         if MountType == "Vehicle":
             TranqLine =(AmmoBase+" Tranq").ljust(20) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
-                   "0".center(11) + "0".center(14) + MountTranqShortRange.center(13) + '\n'
+                   + Bulk.center(8) + MagazineListing.center(10) + \
+                   "0".center(11) + "0".center(14) + MountTranqShortRange.center(13)
         else: TranqLine = (AmmoBase+" Tranq").ljust(20) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + TranqShortRange.center(13)
         if MountType == "Bipod":
             BipodTranqLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) + \
+                   + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountTranqShortRange.center(13) + '\n'
         else: BipodTranqLine =""
         if MountType == "Tripod":                                           
             TripodTranqLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
-                   + Bulk.center(8) + str(MagazineCap).center(10) +\
+                   + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountTranqShortRange.center(13) + '\n'
         else: TripodTranqLine =""
         if Silenced == 1:                                           
             SilencedTranqLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)+ Bulk.center(8) + \
-                   str(MagazineCap).center(10) +\
+                   MagazineListing.center(10) +\
                    str(int(round(SilencedSSRecoil,0))).center(11)\
                    + str(SilencedBurstRecoil).center(14) + \
                    SilencedTranqShortRange.center(13) + '\n'
         else: SilencedTranqLine =""
 
+        TranqExlainLine = "*1D-1 points of damage plus tranq effect on TNE, page 350."
+        RangeExplainLine ="Range in parentheses is unrounded iron sight range."
+
+        if MagazineType == "cassette":
+            CassetteLine = "C stands for cassette magazine type"
+        else:
+            CassetteLine = ""
+
+        if (MountType == "Vehicle") and (MagazineType == "cassette"):
+            VehiclePowerLine = '\n' + "This weapon draws " + str(round(VehiclePower,2)) + \
+                               "MW from the vehicle its mounted on"
+        else:
+            VehiclePowerLine = ""
         
         # damage table output assembled 
         DamageTableOutput = DamageTableheaders + '\n' + DartLine + '\n' \
                             +BipodDartLine + TripodDartLine + SilencedDartLine + HELine + '\n' \
                             +BipodHELine + TripodHELine + SilencedHELine + HEAPLine + '\n' \
                             +BipodHEAPLine + TripodHEAPLine + SilencedHEAPLine + TranqLine + '\n' \
-                            +BipodTranqLine + TripodTranqLine + SilencedTranqLine 
+                            +BipodTranqLine + TripodTranqLine + SilencedTranqLine + '\n' + \
+                            TranqExlainLine + '\n' + RangeExplainLine + '\n' + CassetteLine \
+                            + VehiclePowerLine
 
 
 
@@ -1468,6 +1520,9 @@ class Gauss_Weapons_Calcs ():
                                           + AmmunitionPriceLine + '\n' + AmmunitionWeightLine \
                                           + '\n' + FeaturesLine + '\n' + TripodLine + \
                                           '\n' + DamageTableOutput
+
+        Gauss_Weapons_Calcs.GaussAmmoWeight = GaussAmmoWeight
+        Gauss_Weapons_Calcs.RecieverLenght = RecieverLenght
 
         
         
