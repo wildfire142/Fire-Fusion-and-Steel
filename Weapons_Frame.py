@@ -7,6 +7,8 @@
 import tkinter as tk
 from tkinter import ttk
 from Gauss_Frame import *
+from Small_Arms_Frame import *
+
 
 #======================
 # class that defines tabs
@@ -20,4 +22,6 @@ class Weapons (ttk.Frame):
         self.notebook.pack(fill="both", expand=True)
 
         GaussWeapons = Gauss_Weapons(self.notebook)
+        SmallArms = Small_Arms(self.notebook)
+        self.notebook.add(SmallArms, text="Small Arms Designer")
         self.notebook.add(GaussWeapons, text="Gauss Weapon Designer")
