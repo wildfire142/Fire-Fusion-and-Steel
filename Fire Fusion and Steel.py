@@ -28,6 +28,13 @@ class FireFusionSteel(ttk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title("Fire Fusion and Steel")
+
+    windowWidth = root.winfo_reqwidth()
+    #PositionRight = int(root.winfo_screenwidth()/2 - windowWidth/2)
+    PositionRight = 360
+    PositionDown = 0
+    root.geometry("+{}+{}".format(PositionRight, PositionDown))
+
     FireFusionSteel(root).pack(fill="both", expand=True)
     root.mainloop()
 
