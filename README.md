@@ -4,7 +4,8 @@ a set of python scripts to automate the design sequences from the books currentl
 
 Useable
 - Gauss weapons
+- Small Arms
 
 In progress 
 
-- Small Arms
+- CPR guns
