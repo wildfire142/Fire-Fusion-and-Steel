@@ -26,6 +26,7 @@ class Gauss_Weapons (ttk.Frame):
     Grenade = int()
     Silenced = int()
     WeaponTypeVar =str()
+    LaserSight = int()
     
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent)
@@ -35,7 +36,7 @@ class Gauss_Weapons (ttk.Frame):
 #======================
 
         self.CommonInfo = ttk.LabelFrame(self, text="Common Data")
-        self.CommonInfo.grid(column=0, row=1, sticky= "NWES", padx=5, pady=5)
+        self.CommonInfo.grid(column=0, row=0, sticky= "NWES", padx=5, pady=5)
 
         #======================
         # Labels
@@ -92,7 +93,7 @@ class Gauss_Weapons (ttk.Frame):
         
 
         self.AmmoInfo = ttk.LabelFrame(self, text="Ammunition Data")
-        self.AmmoInfo.grid(column=0, row=2, sticky= "NWES", padx=5, pady=5)
+        self.AmmoInfo.grid(column=0, row=1, sticky= "NWES", padx=5, pady=5)
 
         
         #======================
@@ -126,7 +127,7 @@ class Gauss_Weapons (ttk.Frame):
         self.radAmmoType1 = tk.Radiobutton(self, text="Military - mass produced", \
                                            variable=self.AmmoTypeVar, value=0.02, \
                                            command= lambda : Set_Outputs())
-        self.radAmmoType1.grid(in_=self.AmmoInfo, column=1, row=2, sticky=tk.W, \
+        self.radAmmoType1.grid(in_=self.AmmoInfo, column=1, row=3, sticky=tk.W, \
                                padx=5, pady=5)
         self.radAmmoType1.select()
 
@@ -142,7 +143,8 @@ class Gauss_Weapons (ttk.Frame):
 
 
         self.WeaponInfo = ttk.LabelFrame(self, text="Weapon Data")
-        self.WeaponInfo.grid(column=0, row=3, sticky= "NWES", padx=5, pady=5)
+        self.WeaponInfo.grid(column=1, row=0, sticky= "NWES", \
+                             padx=5, pady=5)
 
 
         #======================
@@ -180,12 +182,12 @@ class Gauss_Weapons (ttk.Frame):
                                     sticky= "W", padx=5, pady=5)
         # Shock Absorber widget label
         self.RecoilAbsorb_label = ttk.Label(self, text="Recoil Reduction - Shock Absorber")
-        self.RecoilAbsorb_label.grid(in_=self.WeaponInfo, column=0, row=7, \
+        self.RecoilAbsorb_label.grid(in_=self.WeaponInfo, column=0, row=10, \
                                     sticky= "W", padx=5, pady=5)
 
         # Compensator widget label
         self.RecoilComp_label = ttk.Label(self, text="Recoil Reduction - Compensator")
-        self.RecoilComp_label.grid(in_=self.WeaponInfo, column=0, row=8, \
+        self.RecoilComp_label.grid(in_=self.WeaponInfo, column=0, row=11, \
                                     sticky= "W", padx=5, pady=5)
 
         #======================
@@ -237,16 +239,26 @@ class Gauss_Weapons (ttk.Frame):
         self.SightTypeBox = ttk.Combobox(self, textvariable=self.SightType\
                                          ,state='readonly')
         self.SightTypeBox['values'] = ('Iron sights', 'Optic sights', 'Telescopic sights',\
-                                       'Electronic sights', 'Laser sights')
+                                       'Electronic sights')
         self.SightTypeBox.grid(in_=self.WeaponInfo, column=1, row=6, padx=5, pady=5)
         self.SightTypeBox.current(0)
         self.SightTypeBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
+
+        # lasersights option option
+
+        self.LaserSight = tk.IntVar()
+        self.LaserSightCheck = tk.Checkbutton(self, text="Laser Sight", \
+                                           variable=self.LaserSight, \
+                                           command= lambda: Set_Outputs())
+        self.LaserSightCheck.grid(in_=self.WeaponInfo, column=1, row=9, sticky=tk.W, \
+                               padx=5, pady=5)
+        self.LaserSightCheck.deselect()
 
         # Adding a Combo box widget for Recoil shock abosorber
         self.RecoilAbsorb = tk.StringVar()
         self.RecoilAbsorbBox = ttk.Combobox(self, textvariable=self.RecoilAbsorb)
         self.RecoilAbsorbBox['values'] = ('None', 'Folding SA stock', 'SA stock')
-        self.RecoilAbsorbBox.grid(in_=self.WeaponInfo, column=1, row=7, padx=5, pady=5)
+        self.RecoilAbsorbBox.grid(in_=self.WeaponInfo, column=1, row=10, padx=5, pady=5)
         self.RecoilAbsorbBox.current(0)
         self.RecoilAbsorbBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
 
@@ -256,7 +268,7 @@ class Gauss_Weapons (ttk.Frame):
                                           state='readonly')
         self.RecoilCompBox['values'] = ('None', 'Gyroscopic Compensator',\
                                         'Inertial Compensator')
-        self.RecoilCompBox.grid(in_=self.WeaponInfo, column=1, row=8, padx=5, pady=5)
+        self.RecoilCompBox.grid(in_=self.WeaponInfo, column=1, row=11, padx=5, pady=5)
         self.RecoilCompBox.current(0)
         self.RecoilCompBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
 
@@ -268,7 +280,7 @@ class Gauss_Weapons (ttk.Frame):
 
 
         self.OptionsInfo = ttk.LabelFrame(self, text="Weapon Options")
-        self.OptionsInfo.grid(column=0, row=4, rowspan=2, \
+        self.OptionsInfo.grid(column=1, row=1, \
                               sticky= "NWES", padx=5, pady=5)
 
 
@@ -356,8 +368,8 @@ class Gauss_Weapons (ttk.Frame):
 
 
         self.DesignInfo = ttk.LabelFrame(self, text="Design Statistics")
-        self.DesignInfo.grid(column=1, row=1, sticky= "NWES",\
-                             padx=5, pady=5, columnspan =2, rowspan =3)
+        self.DesignInfo.grid(column=2, row=0, sticky= "NWES",\
+                             padx=5, pady=5, rowspan =2)
 
 
         #======================
@@ -372,7 +384,7 @@ class Gauss_Weapons (ttk.Frame):
 
 
         # Adding a Textbox widget for Final Design
-        self.FinalDesignBox = tk.Text(self, width=120, height=32)
+        self.FinalDesignBox = tk.Text(self, width=108, height=32)
         self.FinalDesignBox.grid(in_=self.DesignInfo, column=0, row=1, \
                                  sticky= "NWES", padx=5, pady=5)
 
@@ -383,7 +395,7 @@ class Gauss_Weapons (ttk.Frame):
 
 
         self.ErrorsInfo = ttk.LabelFrame(self, text="Design Errors")
-        self.ErrorsInfo.grid(column=1, row=4, \
+        self.ErrorsInfo.grid(column=2, row=2, \
                               sticky= "NWES", padx=5, pady=5)
 
 
@@ -536,6 +548,7 @@ class Gauss_Weapons (ttk.Frame):
             Gauss_Weapons.Grenade = self.Grenade.get()
             Gauss_Weapons.Silenced = self.Silenced.get()
             Gauss_Weapons.WeaponTypeVar =self.WeaponTypeVar.get()
+            Gauss_Weapons.LaserSight = self.LaserSight.get()
             Gauss_Weapons_Calcs ()
             Design_Error_Checks ()
             self.FinalDesignBox.delete('1.0', 'end')
@@ -572,6 +585,7 @@ class Gauss_Weapons_Calcs ():
         BayonetLug = int(Gauss_Weapons.BayonetLug)
         Grenade = int(Gauss_Weapons.Grenade)
         Silenced = int(Gauss_Weapons.Silenced)
+        LaserSight = int(Gauss_Weapons.LaserSight)
 
 #======================
 # ammo design section
@@ -743,12 +757,16 @@ class Gauss_Weapons_Calcs ():
         elif SightType =="Electronic sights":
             SightMass = 0.2
             SightPrice = 2000
-        elif SightType =="Laser sights":
-            SightMass = 0.5
-            SightPrice = 300
         else: #iron sights
             SightMass = 0.0
             SightPrice = 0
+
+        if LaserSight == 1:
+            LaserSightMass = 0.5
+            LaserSightPrice = 300
+        else: #no laser sight fitted
+            LaserSightMass = 0.0
+            LaserSightPrice = 0            
 
 #======================
 # compensators Values
@@ -864,10 +882,6 @@ class Gauss_Weapons_Calcs ():
             FinalShortRange = BaseShortRange + 20
             FinalTranqRange = BaseTranqRange + 20
             FinalHEAPRange = BaseHEAPRange + 20
-        elif SightType =="Laser sights":
-            FinalShortRange = 240
-            FinalTranqRange = 240 * 0.6
-            FinalHEAPRange = 240 * 0.75
         else: # iron sights
             FinalShortRange = BaseShortRange
             FinalTranqRange = BaseTranqRange
@@ -969,12 +983,13 @@ class Gauss_Weapons_Calcs ():
         FinalLenght = round(GaussBarrelLenght + RecieverLenght + StockLenght + \
                             GrenadeLenght, 1)
         FinalEmptyWeight = round(GaussBarrelWeight + ReceiverWeight + StockWeight \
-                                 + MagazineEmptyWeight + SightMass + RecoilAbsorbWeight\
+                                 + MagazineEmptyWeight + SightMass + LaserSightMass +\
+                                 RecoilAbsorbWeight\
                                  + RecoilCompWeight + MountWeight, 3)
         FinalLoadedWeight = round (FinalEmptyWeight - MagazineEmptyWeight \
                                    + MagazineLoadedWeight, 3)
         FinalPrice = round(GaussBarrelPrice + ReceiverPrice + StockPrice + SightPrice\
-                           + RecoilAbsorbPrice + RecoilCompPrice + \
+                           + LaserSightPrice + RecoilAbsorbPrice + RecoilCompPrice + \
                            MountPrice + GrenadePrice, 2)
         MagazineLoadedWeight = round(MagazineLoadedWeight,4)
         MagazineEmptyWeight = round(MagazineEmptyWeight,4)
@@ -987,15 +1002,25 @@ class Gauss_Weapons_Calcs ():
 #======================
 
         if SightType == "Optic sights":
-            SightOption = "Optic sights"
+            if LaserSight == 1:
+                SightOption = "Optic sights and laser sights"
+            else: # optic but no laser sight
+                SightOption = "Optic sights"
         elif SightType == "Telescopic sights":
-            SightOption = "Telescopic sights"
+            if LaserSight == 1:
+                SightOption = "Telescopic sights and laser sights"
+            else: # telescopic but no laser sight
+                SightOption = "Telescopic sights"
         elif SightType == "Electronic sights":
-            SightOption = "Electronic sights"
-        elif SightType == "Laser sights":
-            SightOption = "Laser sights"
+            if LaserSight == 1:
+                SightOption = "Electronic sights and laser sights"
+            else: # Electronic but no laser sight
+                SightOption = "Electronic sights"
         else: #No sights fitted
-            SightOption = ""
+            if LaserSight == 1:
+                SightOption = "Laser sights"
+            else: # no sights fitted
+                SightOption = ""
 
 
         if MountType == "Bipod":
@@ -1286,9 +1311,21 @@ class Gauss_Weapons_Calcs ():
 # Display line build up
 #======================
 
+        if AmmoDiameter - int(AmmoDiameter) != 0:
+            AmmoBaseDiameter = AmmoDiameter
+        else:
+            AmmoBaseDiameter = int(AmmoDiameter)
+
+        if GaussAmmoLenght - int(GaussAmmoLenght) != 0:
+            BaseGaussAmmoLenght = GaussAmmoLenght
+        else:
+            BaseGaussAmmoLenght = int(GaussAmmoLenght)
+
+        AmmoBase = str(AmmoBaseDiameter)+'x'+str(BaseGaussAmmoLenght)+"mm"
+
         NameLine = "Designation: " + WeaponName
         TLLine = "TL: "+str(TechLevel)
-        AmmoLine = "Ammo: "+str(AmmoDiameter)+'x'+str(GaussAmmoLenght)+" mm/"+str(AmmoVelocity)
+        AmmoLine = "Ammo: "+ AmmoBase + "/"+str(AmmoVelocity)
         MuzzleLine = "Muzzle Energy: " + str(round(MuzzleEnergy,1)) + " joules (required power: " + \
                      str(round(RequiredEnergy,1)) + " joules)"
         WeaponLenghtLine = "Weapon Lenght: " + str(FinalLenght) + " cm"
@@ -1339,39 +1376,38 @@ class Gauss_Weapons_Calcs ():
             MagazineListing = str(MagazineCap)
 
         #damage table headers
-        AmmoBase = str(AmmoDiameter)+'x'+str(GaussAmmoLenght)+"mm/"+str(AmmoVelocity)
-        DamageTableheaders = "Round".ljust(20) +"ROF".ljust(6)+ "Dam Val".center(10)+ \
+        DamageTableheaders = "Round".ljust(24) +"ROF".ljust(6)+ "Dam Val".center(10)+ \
                              "Pen Rtg".center(10) + "Bulk".center(8) + "Magazine".center(10)\
                              + "SS Recoil".center(11) + "Burst Recoil".center(14) +\
                              "Short Range".center(13)
 
         #Dart ammo damage ouput
         if MountType == "Vehicle":
-            DartLine =(AmmoBase+" Dart").ljust(20) + RateofFire.ljust(6)  + \
+            DartLine =(AmmoBase+" Dart").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    "0".center(11) + "0".center(14) + MountShortRange.center(13)
-        else: DartLine = (AmmoBase+" Dart").ljust(20) + RateofFire.ljust(6)  + \
+        else: DartLine = (AmmoBase+" Dart").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + ShortRange.center(13)
         if MountType == "Bipod":
-            BipodDartLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
+            BipodDartLine = "    Bipod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountShortRange.center(13) + '\n'
         else: BipodDartLine =""
         if MountType == "Tripod":                                           
-            TripodDartLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
+            TripodDartLine = "    Tripod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(BaseDamageValue,0))).center(10) + Penetration.center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountShortRange.center(13) + '\n'
         else: TripodDartLine =""
         if Silenced == 1:                                           
-            SilencedDartLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
+            SilencedDartLine = "    Silenced".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedBaseDamageValue,0))).center(10) + \
                    SilencedPenetration.center(10) + Bulk.center(8) + \
                    MagazineListing.center(10) +\
@@ -1382,31 +1418,31 @@ class Gauss_Weapons_Calcs ():
 
         #HE ammo damge ouput
         if MountType == "Vehicle":
-            HELine =(AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
+            HELine =(AmmoBase+" HE").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13)
-        else: HELine = (AmmoBase+" HE").ljust(20) + RateofFire.ljust(6)  + \
+        else: HELine = (AmmoBase+" HE").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + HEAPShortRange.center(13)
         if MountType == "Bipod":
-            BipodHELine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
+            BipodHELine = "    Bipod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: BipodHELine =""
         if MountType == "Tripod":                                           
-            TripodHELine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
+            TripodHELine = "    Tripod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: TripodHELine =""
         if Silenced == 1:                                           
-            SilencedHELine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
+            SilencedHELine = "    Silenced".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedHEAPDamageValue,0))).center(10) + \
                    "Nil".center(10)+ Bulk.center(8) + \
                    MagazineListing.center(10) +\
@@ -1417,31 +1453,31 @@ class Gauss_Weapons_Calcs ():
 
         #HEAP ammo damge ouput
         if MountType == "Vehicle":
-            HEAPLine =(AmmoBase+" HEAP").ljust(20) + RateofFire.ljust(6)  + \
+            HEAPLine =(AmmoBase+" HEAP").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    "0".center(11) + "0".center(14) + MountHEAPShortRange.center(13)
-        else: HEAPLine = (AmmoBase+" HEAP").ljust(20) + RateofFire.ljust(6)  + \
+        else: HEAPLine = (AmmoBase+" HEAP").ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + HEAPShortRange.center(13)
         if MountType == "Bipod":
-            BipodHEAPLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
+            BipodHEAPLine = "    Bipod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: BipodHEAPLine =""
         if MountType == "Tripod":                                           
-            TripodHEAPLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
+            TripodHEAPLine = "    Tripod".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(HEAPDamageValue,0))).center(10) + "2-2-2".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountHEAPShortRange.center(13) + '\n'
         else: TripodHEAPLine =""
         if Silenced == 1:                                           
-            SilencedHEAPLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
+            SilencedHEAPLine = "    Silenced".ljust(24) + RateofFire.ljust(6)  + \
                    str(int(round(SilencedHEAPDamageValue,0))).center(10) + \
                    "2-2-2".center(10)+ Bulk.center(8) + \
                    MagazineListing.center(10) +\
@@ -1452,31 +1488,31 @@ class Gauss_Weapons_Calcs ():
 
         #Tranq ammo damge ouput
         if MountType == "Vehicle":
-            TranqLine =(AmmoBase+" Tranq").ljust(20) + RateofFire.ljust(6)  + \
+            TranqLine =(AmmoBase+" Tranq").ljust(24) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    "0".center(11) + "0".center(14) + MountTranqShortRange.center(13)
-        else: TranqLine = (AmmoBase+" Tranq").ljust(20) + RateofFire.ljust(6)  + \
+        else: TranqLine = (AmmoBase+" Tranq").ljust(24) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoil,0))).center(11) + \
                    str(BurstRecoil).center(14) + TranqShortRange.center(13)
         if MountType == "Bipod":
-            BipodTranqLine = "    Bipod".ljust(20) + RateofFire.ljust(6)  + \
+            BipodTranqLine = "    Bipod".ljust(24) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) + \
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountTranqShortRange.center(13) + '\n'
         else: BipodTranqLine =""
         if MountType == "Tripod":                                           
-            TripodTranqLine = "    Tripod".ljust(20) + RateofFire.ljust(6)  + \
+            TripodTranqLine = "    Tripod".ljust(24) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)\
                    + Bulk.center(8) + MagazineListing.center(10) +\
                    str(int(round(SSRecoilMount,0))).center(11) + \
                    str(BurstRecoilMount).center(14) + MountTranqShortRange.center(13) + '\n'
         else: TripodTranqLine =""
         if Silenced == 1:                                           
-            SilencedTranqLine = "    Silenced".ljust(20) + RateofFire.ljust(6)  + \
+            SilencedTranqLine = "    Silenced".ljust(24) + RateofFire.ljust(6)  + \
                    "-1*".center(10) + "Nil".center(10)+ Bulk.center(8) + \
                    MagazineListing.center(10) +\
                    str(int(round(SilencedSSRecoil,0))).center(11)\
@@ -1488,7 +1524,7 @@ class Gauss_Weapons_Calcs ():
         RangeExplainLine ="Range in parentheses is unrounded iron sight range."
 
         if MagazineType == "cassette":
-            CassetteLine = "C stands for cassette magazine type"
+            CassetteLine = '\n' + "C stands for cassette magazine type"
         else:
             CassetteLine = ""
 
@@ -1497,6 +1533,12 @@ class Gauss_Weapons_Calcs ():
                                "MW from the vehicle its mounted on"
         else:
             VehiclePowerLine = ""
+
+        if LaserSight == 1:
+            LaserSightLine = '\n' + "Laser sight allows 3 aimed shots per turn and all"\
+                             " others to be quick shots, out to 240m"
+        else:
+            LaserSightLine = ""
         
         # damage table output assembled 
         DamageTableOutput = DamageTableheaders + '\n' + DartLine + '\n' \
@@ -1504,8 +1546,8 @@ class Gauss_Weapons_Calcs ():
                             +BipodHELine + TripodHELine + SilencedHELine + HEAPLine + '\n' \
                             +BipodHEAPLine + TripodHEAPLine + SilencedHEAPLine + TranqLine + '\n' \
                             +BipodTranqLine + TripodTranqLine + SilencedTranqLine + '\n' + \
-                            TranqExlainLine + '\n' + RangeExplainLine + '\n' + CassetteLine \
-                            + VehiclePowerLine
+                            TranqExlainLine + '\n' + RangeExplainLine + CassetteLine \
+                            + VehiclePowerLine + LaserSightLine
 
 
 
