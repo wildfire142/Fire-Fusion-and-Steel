@@ -11,11 +11,11 @@ import math
 class Gauss_Weapons (ttk.Frame):
     TechLevel = int()
     WeaponName = str()
-    AmmoDiameter = float()
+    AmmoDiameter = str()
     AmmoTypeVar = float()
     MuzzleVelocity = int()
     RateofFire = str()
-    MagazineCap = int()
+    MagazineCap = str()
     StockType = str()
     MountType = str()
     MagazineType = str()
@@ -61,7 +61,8 @@ class Gauss_Weapons (ttk.Frame):
         self.WeaponNameBox = ttk.Entry(self, textvariable=self.WeaponName)
         self.WeaponNameBox.grid(in_=self.CommonInfo, column=1, \
                                 row=1, padx=5, pady=5, sticky= "WE")
-        self.WeaponNameBox.bind ('<KeyRelease>', lambda event: Set_Outputs() ) 
+        self.WeaponNameBox.bind ('<KeyRelease>', \
+                                 lambda event: Check_Is_Not_Empty(self, "WeaponName") ) 
 
         # Adding a Combo box widget for Tech Level
         self.TechLevel = tk.IntVar()
@@ -116,10 +117,11 @@ class Gauss_Weapons (ttk.Frame):
         #======================
 
         # Adding a Textbox Entry widget for Ammo diameter
-        self.AmmoDiameter = tk.DoubleVar(self, value="4")
+        self.AmmoDiameter = tk.StringVar(self, value="4")
         self.GaussAmmoDiameter = ttk.Entry(self, width=15, textvariable=self.AmmoDiameter)
         self.GaussAmmoDiameter.grid(in_=self.AmmoInfo, column=1, row=1, padx=5, pady=5)
-        self.GaussAmmoDiameter.bind ('<KeyRelease>', lambda event: Set_Outputs() ) 
+        self.GaussAmmoDiameter.bind ('<KeyRelease>', \
+                                 lambda event: Check_Is_Not_Empty(self, "AmmoDiameter") ) 
 
         # Ammo type military or Commercial
         self.AmmoTypeVar = tk.DoubleVar()
@@ -198,7 +200,8 @@ class Gauss_Weapons (ttk.Frame):
         self.MuzzleVelocity = tk.IntVar(self, value="1500")
         self.GaussMuzzleVelocity = ttk.Entry(self, width=15, textvariable=self.MuzzleVelocity)
         self.GaussMuzzleVelocity.grid(in_=self.WeaponInfo, column=1, row=1, padx=5, pady=5)
-        self.GaussMuzzleVelocity.bind ('<KeyRelease>', lambda event: Set_Outputs() ) 
+        self.GaussMuzzleVelocity.bind ('<KeyRelease>', \
+                                 lambda event: Check_Is_Not_Empty(MuzzleVelocity) )  
 
         # Adding a Combo box widget for Rate of Fire
         self.RateofFire = tk.StringVar()
@@ -210,10 +213,11 @@ class Gauss_Weapons (ttk.Frame):
         self.RateofFireBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
 
         # Adding a Textbox Entry widget for Magazine Capacity
-        self.MagazineCap = tk.IntVar(self, value="10")
+        self.MagazineCap = tk.StringVar(self, value="10")
         self.MagazineCapacity = ttk.Entry(self, width=15, textvariable=self.MagazineCap)
         self.MagazineCapacity.grid(in_=self.WeaponInfo, column=1, row=3, padx=5, pady=5)
-        self.MagazineCapacity.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        self.MagazineCapacity.bind ('<KeyRelease>', \
+                                 lambda event: Check_Is_Not_Empty (self, "MagazineCap") ) 
 
         # Adding a Combo box widget for magazine type
         self.MagazineType = tk.StringVar()
@@ -413,8 +417,8 @@ class Gauss_Weapons (ttk.Frame):
         self.GripMagMaxRoundsError_label = ttk.Label\
                                (self)
 
-        # Grip magazine lenght warning label
-        self.GripMagLenghtError_label = ttk.Label\
+        # Grip magazine Length warning label
+        self.GripMagLengthError_label = ttk.Label\
                                (self,text="Rounds too long for grip magazine use box magazine instead" )
 
 
@@ -430,9 +434,9 @@ class Gauss_Weapons (ttk.Frame):
         self.SightTypeError_label = ttk.Label\
                                (self, text="Can not fit that type of sight to a one handed weapon")
 
-        # Box mag max lenght warning label
-        self.BoxMagLenghtError_label = ttk.Label\
-                               (self,text="Receiver lenght too short for a box magazine" )
+        # Box mag max Length warning label
+        self.BoxMagLengthError_label = ttk.Label\
+                               (self,text="Receiver Length too short for a box magazine" )
 
 
 
@@ -463,18 +467,18 @@ class Gauss_Weapons (ttk.Frame):
 
             # max ammo diameter   
 
-            if  Gauss_Weapons.AmmoDiameter > 20.0:
+            if  Gauss_Weapons_Calcs.AmmoDiameter > 20.0:
                 self.MaxAmmoDiameterError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
                 self.MaxAmmoDiameterError_label.grid_forget()
 
             #excess rounds in grip mag warning
-
-            GripMagazineCap= 140/Gauss_Weapons.AmmoDiameter
+                
+            GripMagazineCap= 140/Gauss_Weapons_Calcs.AmmoDiameter
 
             if (Gauss_Weapons.MagazineType =="Grip Magazine") and \
-               (Gauss_Weapons.MagazineCap > GripMagazineCap):
+               (Gauss_Weapons_Calcs.MagazineCap > GripMagazineCap):
                 self.GripMagMaxRoundsError_label.configure(text="Too many rounds in grip magazine max rounds equals "\
                                                  +str(int(GripMagazineCap))) 
                 self.GripMagMaxRoundsError_label.grid(in_=self.ErrorsInfo, column=0, \
@@ -485,21 +489,21 @@ class Gauss_Weapons (ttk.Frame):
             # rounds too long for grip magazines    
 
             if (Gauss_Weapons.MagazineType =="Grip Magazine") and \
-               (Gauss_Weapons.AmmoDiameter*5 > 60):
-                self.GripMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+               (Gauss_Weapons_Calcs.AmmoDiameter*5 > 60):
+                self.GripMagLengthError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
-                self.GripMagLenghtError_label.grid_forget()
+                self.GripMagLengthError_label.grid_forget()
 
             # max rounds for box magazines
 
             if (Gauss_Weapons.MagazineType == "Box Magazine"):
-                if (Gauss_Weapons.MagazineCap > 100) and \
+                if (Gauss_Weapons_Calcs.MagazineCap > 100) and \
                    (Gauss_Weapons_Calcs.GaussAmmoWeight > 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 100 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
-                elif (Gauss_Weapons.MagazineCap > 200) and \
+                elif (Gauss_Weapons_Calcs.MagazineCap > 200) and \
                      (Gauss_Weapons_Calcs.GaussAmmoWeight < 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 200 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
@@ -511,11 +515,11 @@ class Gauss_Weapons (ttk.Frame):
 
             #reciver too short for box mag warnings
             if (Gauss_Weapons.MagazineType == "Box Magazine"):
-                if ((Gauss_Weapons.AmmoDiameter*5)+150) >(Gauss_Weapons_Calcs.RecieverLenght*10):
-                    self.BoxMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+                if ((Gauss_Weapons.AmmoDiameter*5)+150) >(Gauss_Weapons_Calcs.RecieverLength*10):
+                    self.BoxMagLengthError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
                 else:
-                    self.BoxMagLenghtError_label.grid_forget()
+                    self.BoxMagLengthError_label.grid_forget()
 
             #wrong sight types warnings
 
@@ -555,6 +559,10 @@ class Gauss_Weapons (ttk.Frame):
             self.FinalDesignBox.insert('1.0', Gauss_Weapons_Calcs.FinalDesign)
 
 
+        def Check_Is_Not_Empty(self, name):
+            CheckVariable = "self."+name+".get()"
+            if len(eval(CheckVariable)) != 0:
+                Set_Outputs()
 
 
 
@@ -564,7 +572,9 @@ class Gauss_Weapons_Calcs ():
 
     FinalDesign = str()
     GaussAmmoWeight = float()
-    RecieverLenght =float()
+    RecieverLength =float()
+    AmmoDiameter = float()
+    MagazineCap = int()
     
     def __init__(self,):
         
@@ -590,7 +600,7 @@ class Gauss_Weapons_Calcs ():
 #======================
 # ammo design section
 #======================
-        GaussAmmoLenght = AmmoDiameter*5 #in mm
+        GaussAmmoLength = AmmoDiameter*5 #in mm
 
         GaussAmmoWeight = 0.02*math.pi*pow((AmmoDiameter/2),3)
 
@@ -606,13 +616,13 @@ class Gauss_Weapons_Calcs ():
         BarrelTLMods = [1.6,1.3,1.0,0.8,0.6,0.6,0.4]
 
         if TechLevel >16:
-           BarreLenghtMult = 0.4
+           BarreLengthMult = 0.4
         else:
-            BarreLenghtMult = BarrelTLMods [TechLevel-10]
+            BarreLengthMult = BarrelTLMods [TechLevel-10]
 
-        GaussBarrelLenght = MuzzleVelocity / 100*BarreLenghtMult # in cm
+        GaussBarrelLength = MuzzleVelocity / 100*BarreLengthMult # in cm
 
-        GaussBarrelWeight = 0.03*GaussBarrelLenght # in kg
+        GaussBarrelWeight = 0.03*GaussBarrelLength # in kg
 
         GaussBarrelPrice = GaussBarrelWeight*600 # in Credits
 
@@ -647,12 +657,12 @@ class Gauss_Weapons_Calcs ():
         else:
             ReceiverWeight = ReceiverWeight
 
-        RecieverLenght = math.sqrt(1000*ReceiverWeight)
+        RecieverLength = math.sqrt(1000*ReceiverWeight)
 
-        if RecieverLenght < (GaussAmmoLenght/10):
-            RecieverLenght = GaussAmmoLenght
+        if RecieverLength < (GaussAmmoLength/10):
+            RecieverLength = GaussAmmoLength
         else:
-            RecieverLenght = RecieverLenght
+            RecieverLength = RecieverLength
 
 
         if RateofFire == 'SA':
@@ -667,13 +677,13 @@ class Gauss_Weapons_Calcs ():
 
 # in cm
         if StockType == "Pistol grip":
-            StockLenght = 0
+            StockLength = 0
         elif StockType == "Hollow pistol grip":
-            StockLenght = 0
+            StockLength = 0
         elif StockType == "Rifle stock":
-            StockLenght = 25
+            StockLength = 25
         else: #Bullpup rifle stock
-            StockLenght = 5
+            StockLength = 5
 
 # in kg
 
@@ -810,10 +820,10 @@ class Gauss_Weapons_Calcs ():
 #======================
 
         if Grenade == 1:
-            GrenadeLenght = 5
+            GrenadeLength = 5
             GrenadePrice = 50
         else: #no adaptor
-            GrenadeLenght = 0
+            GrenadeLength = 0
             GrenadePrice = 0
 
 #======================
@@ -980,8 +990,8 @@ class Gauss_Weapons_Calcs ():
 # Final values calculations
 #======================
 
-        FinalLenght = round(GaussBarrelLenght + RecieverLenght + StockLenght + \
-                            GrenadeLenght, 1)
+        FinalLength = round(GaussBarrelLength + RecieverLength + StockLength + \
+                            GrenadeLength, 1)
         FinalEmptyWeight = round(GaussBarrelWeight + ReceiverWeight + StockWeight \
                                  + MagazineEmptyWeight + SightMass + LaserSightMass +\
                                  RecoilAbsorbWeight\
@@ -1316,19 +1326,19 @@ class Gauss_Weapons_Calcs ():
         else:
             AmmoBaseDiameter = int(AmmoDiameter)
 
-        if GaussAmmoLenght - int(GaussAmmoLenght) != 0:
-            BaseGaussAmmoLenght = GaussAmmoLenght
+        if GaussAmmoLength - int(GaussAmmoLength) != 0:
+            BaseGaussAmmoLength = GaussAmmoLength
         else:
-            BaseGaussAmmoLenght = int(GaussAmmoLenght)
+            BaseGaussAmmoLength = int(GaussAmmoLength)
 
-        AmmoBase = str(AmmoBaseDiameter)+'x'+str(BaseGaussAmmoLenght)+"mm"
+        AmmoBase = str(AmmoBaseDiameter)+'x'+str(BaseGaussAmmoLength)+"mm"
 
         NameLine = "Designation: " + WeaponName
         TLLine = "TL: "+str(TechLevel)
         AmmoLine = "Ammo: "+ AmmoBase + "/"+str(AmmoVelocity)
         MuzzleLine = "Muzzle Energy: " + str(round(MuzzleEnergy,1)) + " joules (required power: " + \
                      str(round(RequiredEnergy,1)) + " joules)"
-        WeaponLenghtLine = "Weapon Lenght: " + str(FinalLenght) + " cm"
+        WeaponLengthLine = "Weapon Length: " + str(FinalLength) + " cm"
         WeaponWeightLine = "Weapon Weight: " + str(FinalLoadedWeight) + " kg loaded, " + \
                            str(FinalEmptyWeight) + " kg empty (includes weight of empty "\
                            + MagazineType + ")"
@@ -1351,7 +1361,7 @@ class Gauss_Weapons_Calcs ():
 #======================
 # damage table build up
 #======================
-        Bulk = str(int(round(FinalLenght/15,0)))
+        Bulk = str(int(round(FinalLength/15,0)))
         ShortRange = str(FinalShortRange) + "("+str(int(round(BaseShortRange,0)))+")"
         MountShortRange = str(int(round(MountFinalShortRange,0))) \
                           + "("+str(int(round(MountBaseShortRange,0)))+")"
@@ -1556,7 +1566,7 @@ class Gauss_Weapons_Calcs ():
 #======================
 
         Gauss_Weapons_Calcs.FinalDesign = NameLine + '\n' + TLLine + '\n' + AmmoLine + '\n' \
-                                          + MuzzleLine + '\n' + WeaponLenghtLine + '\n' + \
+                                          + MuzzleLine + '\n' + WeaponLengthLine + '\n' + \
                                           WeaponWeightLine + '\n' + WeaponPriceLine + '\n' + \
                                           MagazineWeightLine + '\n' + MagazinePriceLine + '\n' \
                                           + AmmunitionPriceLine + '\n' + AmmunitionWeightLine \
@@ -1564,7 +1574,8 @@ class Gauss_Weapons_Calcs ():
                                           '\n' + DamageTableOutput
 
         Gauss_Weapons_Calcs.GaussAmmoWeight = GaussAmmoWeight
-        Gauss_Weapons_Calcs.RecieverLenght = RecieverLenght
+        Gauss_Weapons_Calcs.RecieverLength = RecieverLength
+        Gauss_Weapons_Calcs.AmmoDiameter = AmmoDiameter
 
         
         
