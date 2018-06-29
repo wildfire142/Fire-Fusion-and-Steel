@@ -11,19 +11,19 @@ import math
 class Small_Arms (ttk.Frame):
     TechLevel = int()
     WeaponName = str()
-    AmmoDiameter = float()
+    AmmoDiameter = str()
     ShotgunBullets = int()
     FlechetteDarts = int()
-    CartridgeLenght = float()
+    CartridgeLength = str()
     AmmoTypeVar = str()
     CaseTypeVar = str()
     ProdTypeVar = str()
-    BarrelLenghtModVar =float()
+    BarrelLengthModVar =float()
     RiflingTypeVar = str()
     BarrelTypeVar = str()
     RecieverTypeVar = str()
     RateofFire = str()
-    MagazineCap = int()
+    MagazineCap = str()
     StockType = str()
     MountType = str()
     MagazineType = str()
@@ -40,10 +40,11 @@ class Small_Arms (ttk.Frame):
     Suppressor = int()
     FlashSuppressor = str()
     RotaryWeapon = int()
-    RotaryBarrels = int()
+    RotaryBarrels = str()
     
     def __init__(self, parent):
         ttk.Frame.__init__(self, parent)
+
 
 #======================
 # Common data Frame
@@ -75,7 +76,8 @@ class Small_Arms (ttk.Frame):
         self.WeaponNameBox = ttk.Entry(self, textvariable=self.WeaponName)
         self.WeaponNameBox.grid(in_=self.CommonInfo, column=1, \
                                 row=1, padx=5, pady=5, sticky= "WE")
-        self.WeaponNameBox.bind ('<KeyRelease>', lambda event: Set_Outputs() ) 
+        self.WeaponNameBox.bind ('<KeyRelease>', \
+                                 lambda event: Check_Is_Not_Empty(self, "WeaponName") ) 
 
         # Adding a Combo box widget for Tech Level
         self.TechLevel = tk.IntVar()
@@ -126,8 +128,8 @@ class Small_Arms (ttk.Frame):
         self.AmmoDiameter_label.grid(in_=self.AmmoInfo, column=0, row=1, \
                                           sticky= "W", padx=5, pady=5)
         # Ammo diameter widget label
-        self.CartridgeLenght_label = ttk.Label(self, text="Cartridge Case Lenght (mm)")
-        self.CartridgeLenght_label.grid(in_=self.AmmoInfo, column=0, row=2, \
+        self.CartridgeLength_label = ttk.Label(self, text="Cartridge Case Length (mm)")
+        self.CartridgeLength_label.grid(in_=self.AmmoInfo, column=0, row=2, \
                                           sticky= "W", padx=5, pady=5)
         
         # Shotgun cartridge rounds number of bullets widget label
@@ -160,33 +162,37 @@ class Small_Arms (ttk.Frame):
         #======================
 
         # Adding a Textbox Entry widget for Ammo diameter
-        self.AmmoDiameter = tk.DoubleVar(self, value="4")
+        self.AmmoDiameter = tk.StringVar(self, value="4")
         self.SmallArmsAmmoDiameter = ttk.Entry(self, width=15, textvariable=self.AmmoDiameter)
         self.SmallArmsAmmoDiameter.grid(in_=self.AmmoInfo, column=1, row=1, padx=5, pady=5)
-        self.SmallArmsAmmoDiameter.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        self.SmallArmsAmmoDiameter.bind ('<KeyRelease>',\
+                                 lambda event: Check_Is_Not_Empty(self, "AmmoDiameter") ) 
 
-        # Adding a Textbox Entry widget for Cartridge Lenght
-        self.CartridgeLenght = tk.DoubleVar(self, value="9")
-        self.SmallArmsCartridgeLenght = ttk.Entry(self, width=15,\
-                                                 textvariable=self.CartridgeLenght)
-        self.SmallArmsCartridgeLenght.grid (in_=self.AmmoInfo, column=1, row=2, padx=5, pady=5)
-        self.SmallArmsCartridgeLenght.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        # Adding a Textbox Entry widget for Cartridge Length
+        self.CartridgeLength = tk.StringVar(self, value="9")
+        self.SmallArmsCartridgeLength = ttk.Entry(self, width=15,\
+                                                 textvariable=self.CartridgeLength)
+        self.SmallArmsCartridgeLength.grid (in_=self.AmmoInfo, column=1, row=2, padx=5, pady=5)
+        self.SmallArmsCartridgeLength.bind ('<KeyRelease>',\
+                                 lambda event: Check_Is_Not_Empty(self, "CartridgeLength") ) 
 
         # Adding a Textbox Entry widget for Shotgun Bullets
-        self.ShotgunBullets = tk.DoubleVar(self, value="4")
+        self.ShotgunBullets = tk.StringVar(self, value="4")
         self.SmallArmsShotgunBullets = ttk.Entry(self, width=15,\
                                                  textvariable=self.ShotgunBullets)
         self.SmallArmsShotgunBullets.grid (in_=self.AmmoInfo, column=1, row=3, padx=5, pady=5)
-        self.SmallArmsShotgunBullets.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        self.SmallArmsShotgunBullets.bind ('<KeyRelease>',\
+                                 lambda event: Check_Is_Not_Empty(self, "ShotgunBullets") ) 
         self.SmallArmsShotgunBullets.configure(state='disabled')
 
 
         # Adding a Textbox Entry widget for Flechette darts
-        self.FlechetteDarts = tk.DoubleVar(self, value="4")
+        self.FlechetteDarts = tk.StringVar(self, value="4")
         self.SmallArmsFlechetteDarts = ttk.Entry(self, width=15,\
                                                  textvariable=self.FlechetteDarts)
         self.SmallArmsFlechetteDarts.grid (in_=self.AmmoInfo, column=1, row=4, padx=5, pady=5)
-        self.SmallArmsFlechetteDarts.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        self.SmallArmsFlechetteDarts.bind ('<KeyRelease>',\
+                                 lambda event: Check_Is_Not_Empty(self, "FlechetteDarts") ) 
 
         # Ammo type standard or ETC
         self.AmmoTypeVar = tk.StringVar()
@@ -310,16 +316,16 @@ class Small_Arms (ttk.Frame):
         # widgets
         #======================
 
-        # Barrel lenght adjuster
+        # Barrel Length adjuster
 
-        self.BarrelLenghtModVar = tk.DoubleVar()
-        self.BarrelLenghtMod = tk.Scale (self, from_=20, to_=230, orient='horizontal',\
-                                         label="Actual Barrel Lenght as % of Average Barrel Lenght",\
-                                         variable=self.BarrelLenghtModVar)
-        self.BarrelLenghtMod.grid(in_=self.WeaponInfo, column=0, row=0, columnspan=2, \
+        self.BarrelLengthModVar = tk.DoubleVar()
+        self.BarrelLengthMod = tk.Scale (self, from_=20, to_=230, orient='horizontal',\
+                                         label="Actual Barrel Length as % of Average Barrel Length",\
+                                         variable=self.BarrelLengthModVar)
+        self.BarrelLengthMod.grid(in_=self.WeaponInfo, column=0, row=0, columnspan=2, \
                                   sticky="NWES", padx=5, pady=5)
-        self.BarrelLenghtMod.set(100)                                   
-        self.BarrelLenghtMod.bind ('<ButtonRelease-1>', lambda event: Set_Outputs() )
+        self.BarrelLengthMod.set(100)                                   
+        self.BarrelLengthMod.bind ('<ButtonRelease-1>', lambda event: Set_Outputs() )
 
         # Rifling type smoothbore or rifled
         self.RiflingTypeVar = tk.StringVar()
@@ -375,10 +381,11 @@ class Small_Arms (ttk.Frame):
         self.RateofFireBox.bind ('<<ComboboxSelected>>', lambda event: Set_Outputs() )
 
         # Adding a Textbox Entry widget for Magazine Capacity
-        self.MagazineCap = tk.IntVar(self, value="10")
+        self.MagazineCap = tk.StringVar(self, value="10")
         self.MagazineCapacity = ttk.Entry(self, width=15, textvariable=self.MagazineCap)
         self.MagazineCapacity.grid(in_=self.WeaponInfo, column=1, row=7, padx=5, pady=5)
-        self.MagazineCapacity.bind ('<KeyRelease>', lambda event: Set_Outputs() )
+        self.MagazineCapacity.bind ('<KeyRelease>',\
+                                 lambda event: Check_Is_Not_Empty(self, "MagazineCap") )
 
         # Adding a Combo box widget for magazine type
         self.MagazineType = tk.StringVar()
@@ -602,7 +609,7 @@ class Small_Arms (ttk.Frame):
 
 
         # Adding a Textbox Entry widget for rotary barrels
-        self.RotaryBarrels = tk.DoubleVar(self, value="1")
+        self.RotaryBarrels = tk.StringVar(self, value="1")
         self.RotaryBarrelsBox = ttk.Entry(self, width=15,\
                                                  textvariable=self.RotaryBarrels)
         self.RotaryBarrelsBox.grid (in_=self.OptionsInfo, column=2, row=5, padx=5, pady=5)
@@ -668,8 +675,8 @@ class Small_Arms (ttk.Frame):
         self.GripMagMaxRoundsError_label = ttk.Label\
                                (self)
 
-        # Grip magazine lenght warning label
-        self.GripMagLenghtError_label = ttk.Label\
+        # Grip magazine Length warning label
+        self.GripMagLengthError_label = ttk.Label\
                                (self, \
                                 text="Rounds too long for grip magazine use box magazine instead" )
 
@@ -704,13 +711,13 @@ class Small_Arms (ttk.Frame):
 
 
 
-        # Box mag max lenght warning label
-        self.BoxMagLenghtError_label = ttk.Label\
-                               (self,text="Receiver lenght too short for a box magazine" )
+        # Box mag max Length warning label
+        self.BoxMagLengthError_label = ttk.Label\
+                               (self,text="Receiver Length too short for a box magazine" )
 
-        # Clip mag max lenght warning label
-        self.ClipMagLenghtError_label = ttk.Label\
-                               (self,text="Receiver lenght too short for a clip feed" )
+        # Clip mag max Length warning label
+        self.ClipMagLengthError_label = ttk.Label\
+                               (self,text="Receiver Length too short for a clip feed" )
 
         # shotgun bullets warning label
         self.ShotgunBulletsError_label = ttk.Label\
@@ -788,6 +795,7 @@ class Small_Arms (ttk.Frame):
 
         def Rotary_Weapon_Checks():
             # set options for rotary barrel weapons and removes invalid choices.
+            lambda event: Check_Is_Not_Empty(self, "RotaryBarrels")
             Set_Outputs ()
             if Small_Arms.RotaryWeapon == 1:
                 self.RotaryBarrelsBox.configure(state='normal')
@@ -870,7 +878,7 @@ class Small_Arms (ttk.Frame):
 
             # max ammo diameter   
 
-            if  Small_Arms.AmmoDiameter > 20.0:
+            if  Small_Arms_Calcs.AmmoDiameter > 20.0:
                 self.MaxAmmoDiameterError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
@@ -878,10 +886,10 @@ class Small_Arms (ttk.Frame):
 
             #excess rounds in cylinder mag warning
 
-            CylinderMagazineCap= round(19/(math.sqrt(Small_Arms.AmmoDiameter)),0)
+            CylinderMagazineCap= round(19/(math.sqrt(Small_Arms_Calcs.AmmoDiameter)),0)
 
             if (Small_Arms.MagazineType =="Cylinder") and \
-               (Small_Arms.MagazineCap > CylinderMagazineCap):
+               (Small_Arms_Calcs.MagazineCap > CylinderMagazineCap):
                 self.CylinderMagMaxRoundsError_label.configure(text=\
                                                            "Too many rounds in cylinder"\
                                                            " magazine max rounds equals "\
@@ -896,13 +904,13 @@ class Small_Arms (ttk.Frame):
             # stock mounted mag
             if Small_Arms.TubularMagType == "Stock":
                 TubularMagazineCap = round\
-                                 ((Small_Arms_Calcs.StockLenght/(Small_Arms_Calcs.AmmoLenght/10)),0)
+                                 ((Small_Arms_Calcs.StockLength/(Small_Arms_Calcs.AmmoLength/10)),0)
             else: # underbarrel mounted mag
                 TubularMagazineCap = round\
-                                 ((Small_Arms_Calcs.BarrelLenght/(Small_Arms_Calcs.AmmoLenght/10)),0)
+                                 ((Small_Arms_Calcs.BarrelLength/(Small_Arms_Calcs.AmmoLength/10)),0)
 
             if (Small_Arms.MagazineType =="Tubular magazine") and \
-               (Small_Arms.MagazineCap > TubularMagazineCap):
+               (Small_Arms_Calcs.MagazineCap > TubularMagazineCap):
                 self.TubularMagMaxRoundsError_label.configure(text=\
                                                            "Too many rounds in tubular"\
                                                            " magazine max rounds equals "\
@@ -925,26 +933,26 @@ class Small_Arms (ttk.Frame):
 
             if Small_Arms.AmmoTypeVar == "ETC":
                 if Small_Arms.TechLevel <=4:
-                    GripMagazineCap= 80/(Small_Arms.AmmoDiameter+1)
+                    GripMagazineCap= 80/(Small_Arms_Calcs.AmmoDiameter+1)
                 elif Small_Arms.TechLevel <=6:
-                    GripMagazineCap= 100/(Small_Arms.AmmoDiameter+1)
+                    GripMagazineCap= 100/(Small_Arms_Calcs.AmmoDiameter+1)
                 elif Small_Arms.TechLevel ==7:
-                    GripMagazineCap= 120/(Small_Arms.AmmoDiameter+1)
+                    GripMagazineCap= 120/(Small_Arms_Calcs.AmmoDiameter+1)
                 else: # tech lveel 8+
-                    GripMagazineCap= 140/(Small_Arms.AmmoDiameter+1)
+                    GripMagazineCap= 140/(Small_Arms_Calcs.AmmoDiameter+1)
             else: # standard primer rounds
                 if Small_Arms.TechLevel <=4:
-                    GripMagazineCap= 80/Small_Arms.AmmoDiameter
+                    GripMagazineCap= 80/Small_Arms_Calcs.AmmoDiameter
                 elif Small_Arms.TechLevel <=6:
-                    GripMagazineCap= 100/Small_Arms.AmmoDiameter
+                    GripMagazineCap= 100/Small_Arms_Calcs.AmmoDiameter
                 elif Small_Arms.TechLevel ==7:
-                    GripMagazineCap= 120/Small_Arms.AmmoDiameter
+                    GripMagazineCap= 120/Small_Arms_Calcs.AmmoDiameter
                 else: # tech lveel 8+
-                    GripMagazineCap= 140/Small_Arms.AmmoDiameter
+                    GripMagazineCap= 140/Small_Arms_Calcs.AmmoDiameter
 
 
             if (Small_Arms.MagazineType =="Grip Magazine") and \
-               (Small_Arms.MagazineCap > GripMagazineCap):
+               (Small_Arms_Calcs.MagazineCap > GripMagazineCap):
                 self.GripMagMaxRoundsError_label.configure(text=\
                                                            "Too many rounds in grip"\
                                                            " magazine max rounds equals "\
@@ -957,30 +965,30 @@ class Small_Arms (ttk.Frame):
             # rounds too long for grip magazines
 
             if Small_Arms.TechLevel <=4:
-                MaxAmmoLenght = 30
+                MaxAmmoLength = 30
             elif Small_Arms.TechLevel <=6:
-                MaxAmmoLenght = 40
+                MaxAmmoLength = 40
             elif Small_Arms.TechLevel ==7:
-                MaxAmmoLenght = 50
+                MaxAmmoLength = 50
             else: # tech lveel 8+
-                MaxAmmoLenght = 60
+                MaxAmmoLength = 60
 
             if (Small_Arms.MagazineType =="Grip Magazine") and \
-               (Small_Arms_Calcs.AmmoLenght > MaxAmmoLenght):
-                self.GripMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+               (Small_Arms_Calcs.AmmoLength > MaxAmmoLength):
+                self.GripMagLengthError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
-                self.GripMagLenghtError_label.grid_forget()
+                self.GripMagLengthError_label.grid_forget()
 
             # max rounds for box magazines
 
             if (Small_Arms.MagazineType == "Box Magazine"):
-                if (Small_Arms.MagazineCap > 100) and \
+                if (Small_Arms_Calcs.MagazineCap > 100) and \
                    (Small_Arms_Calcs.AmmoWeight > 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 100 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
-                elif (Small_Arms.MagazineCap > 200) and \
+                elif (Small_Arms_Calcs.MagazineCap > 200) and \
                      (Small_Arms_Calcs.AmmoWeight < 15):
                     self.BoxMagCapError_label.configure(text="Max capacity 200 rounds")
                     self.BoxMagCapError_label.grid(in_=self.ErrorsInfo, column=0, \
@@ -992,19 +1000,21 @@ class Small_Arms (ttk.Frame):
 
             #reciver too short for box mag warnings
             if (Small_Arms.MagazineType == "Box Magazine"):
-                if (Small_Arms_Calcs.AmmoLenght+150) >(Small_Arms_Calcs.RecieverLenght*10):
-                    self.BoxMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+                if (Small_Arms_Calcs.AmmoLength+150) >(Small_Arms_Calcs.RecieverLength*10):
+                    self.BoxMagLengthError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
                 else:
-                    self.BoxMagLenghtError_label.grid_forget()
+                    self.BoxMagLengthError_label.grid_forget()
+            else:
+                self.BoxMagLengthError_label.grid_forget()
 
             #reciver too short for clip mag warnings
             if (Small_Arms.MagazineType == "Clip"):
-                if (Small_Arms_Calcs.AmmoLenght+150) >(Small_Arms_Calcs.RecieverLenght*10):
-                    self.ClipMagLenghtError_label.grid(in_=self.ErrorsInfo, column=0, \
+                if (Small_Arms_Calcs.AmmoLength+150) >(Small_Arms_Calcs.RecieverLength*10):
+                    self.ClipMagLengthError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
                 else:
-                    self.ClipMagLenghtError_label.grid_forget()
+                    self.ClipMagLengthError_label.grid_forget()
 
             #wrong sight types warnings
 
@@ -1064,7 +1074,7 @@ class Small_Arms (ttk.Frame):
 
             # shotgun bullets not divisable by 4
 
-            if (Small_Arms.ShotgunBullets%4) != 0:
+            if (Small_Arms_Calcs.ShotgunBullets%4) != 0:
                 self.ShotgunBulletsError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
@@ -1072,7 +1082,7 @@ class Small_Arms (ttk.Frame):
 
             # flechette darts not divisable by 4
 
-            if (Small_Arms.FlechetteDarts%4) != 0:
+            if (Small_Arms_Calcs.FlechetteDarts%4) != 0:
                 self.FlechetteDartError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
@@ -1097,20 +1107,19 @@ class Small_Arms (ttk.Frame):
                 self.BeltTypeError_label.grid(in_=self.ErrorsInfo, column=0, \
                                     sticky= "W", padx=5, pady=5)
             else:
-                self.BeltTypeError_label.grid_forget()
-            
+                self.BeltTypeError_label.grid_forget()          
 
         def Set_Outputs():
             Small_Arms.TechLevel =self.TechLevel.get()
             Small_Arms.WeaponName =self.WeaponName.get()
             Small_Arms.AmmoDiameter = self.AmmoDiameter.get()
-            Small_Arms.CartridgeLenght = self.CartridgeLenght.get()
+            Small_Arms.CartridgeLength = self.CartridgeLength.get()
             Small_Arms.ShotgunBullets = self.ShotgunBullets.get()
             Small_Arms.FlechetteDarts = self.FlechetteDarts.get()
             Small_Arms.AmmoTypeVar = self.AmmoTypeVar.get()
             Small_Arms.CaseTypeVar = self.CaseTypeVar.get()
             Small_Arms.ProdTypeVar = self.ProdTypeVar.get()
-            Small_Arms.BarrelLenghtModVar = self.BarrelLenghtModVar.get()
+            Small_Arms.BarrelLengthModVar = self.BarrelLengthModVar.get()
             Small_Arms.RiflingTypeVar = self.RiflingTypeVar.get()
             Small_Arms.BarrelTypeVar = self.BarrelTypeVar.get()
             Small_Arms.RecieverTypeVar = self.RecieverTypeVar.get()
@@ -1138,7 +1147,10 @@ class Small_Arms (ttk.Frame):
             self.FinalDesignBox.delete('1.0', 'end')
             self.FinalDesignBox.insert('1.0', Small_Arms_Calcs.FinalDesign)
 
-
+        def Check_Is_Not_Empty(self, name):
+            CheckVariable = "self."+name+".get()"
+            if len(eval(CheckVariable)) != 0:
+                Set_Outputs()
 
       
 
@@ -1146,23 +1158,29 @@ class Small_Arms_Calcs ():
 
     FinalDesign = str()
     AmmoWeight = float()
-    RecieverLenght =float()
-    AmmoLenght = float()
-    BarrelLenght = float()
-    StockLenght = int()
+    RecieverLength =float()
+    AmmoLength = float()
+    BarrelLength = float()
+    StockLength = int()
     AverageMuzzleEnergy = float()
+    AmmoDiameter = float()
+    CartridgeLength = float()
+    ShotgunBullets = int()
+    FlechetteDarts = int()
+    MagazineCap = int()
+    RotaryBarrels = int()
     
     
     def __init__(self,):
 
         TechLevel = int(Small_Arms.TechLevel)
         AmmoDiameter = float(Small_Arms.AmmoDiameter)
-        CartridgeLenght = float(Small_Arms.CartridgeLenght)
+        CartridgeLength = float(Small_Arms.CartridgeLength)
         ShotgunBullets = int(Small_Arms.ShotgunBullets)
         FlechetteDarts = int(Small_Arms.FlechetteDarts)
         AmmoTypeVar = Small_Arms.AmmoTypeVar
         CaseTypeVar = Small_Arms.CaseTypeVar
-        BarrelLenghtModVar = float(Small_Arms.BarrelLenghtModVar)
+        BarrelLengthModVar = float(Small_Arms.BarrelLengthModVar)
         RiflingTypeVar = Small_Arms.RiflingTypeVar
         BarrelTypeVar = Small_Arms.BarrelTypeVar
         RecieverTypeVar = Small_Arms.RecieverTypeVar
@@ -1192,18 +1210,18 @@ class Small_Arms_Calcs ():
 #======================
 
         if Small_Arms.WeaponTypeVar == "Shotgun":
-            AmmoLenght = CartridgeLenght #in mm, shotgun
+            AmmoLength = CartridgeLength #in mm, shotgun
         elif CaseTypeVar == "Straight":
-            AmmoLenght = CartridgeLenght + AmmoDiameter #in mm straight cartridge
+            AmmoLength = CartridgeLength + AmmoDiameter #in mm straight cartridge
         else:
-            AmmoLenght = CartridgeLenght + (2*AmmoDiameter) #in mm necked cartridge
+            AmmoLength = CartridgeLength + (2*AmmoDiameter) #in mm necked cartridge
 
         if Small_Arms.WeaponTypeVar == "Shotgun":
-            AmmoWeight = 0.003*CartridgeLenght*math.pi*pow((AmmoDiameter/2),2)
+            AmmoWeight = 0.003*CartridgeLength*math.pi*pow((AmmoDiameter/2),2)
         elif CaseTypeVar == "Straight":
-            AmmoWeight = 0.008*CartridgeLenght*math.pi*pow((AmmoDiameter/2),2)#straight cartridge
+            AmmoWeight = 0.008*CartridgeLength*math.pi*pow((AmmoDiameter/2),2)#straight cartridge
         else:
-            AmmoWeight = 0.01*CartridgeLenght*math.pi*pow((AmmoDiameter/2),2) #necked cartridge
+            AmmoWeight = 0.01*CartridgeLength*math.pi*pow((AmmoDiameter/2),2) #necked cartridge
 
         AmmoWeight = round(AmmoWeight,1) # in grams
 
@@ -1233,7 +1251,7 @@ class Small_Arms_Calcs ():
 
         # in joules
         AverageMuzzleEnergy = MuzzleVelocityTLMult*MuzzleVelCartMods*\
-                                CartridgeLenght*math.pi*pow((AmmoDiameter/2),2)
+                                CartridgeLength*math.pi*pow((AmmoDiameter/2),2)
 
         if AverageMuzzleEnergy > 10000:
             PriceTypeMult = 0.05
@@ -1263,17 +1281,19 @@ class Small_Arms_Calcs ():
             else: # Rifled
                 RiflingMod = 0.5
 
-        AverageBarrelLenght = (AverageMuzzleEnergy/pow(AmmoDiameter,2))*RiflingMod
 
-        if AverageBarrelLenght < 10:
-            AverageBarrelLenght= 10
+        AverageBarrelLength = (AverageMuzzleEnergy/pow(AmmoDiameter,2))*RiflingMod
 
-        BarrelLenght = AverageBarrelLenght/100*BarrelLenghtModVar # in cm
+
+        if AverageBarrelLength < 10:
+            AverageBarrelLength = 10
+
+        BarrelLength = AverageBarrelLength/100*BarrelLengthModVar # in cm
 
         if BarrelTypeVar == "Light":
-            BarrelWeight = 0.02*BarrelLenght # in kg
+            BarrelWeight = 0.02*BarrelLength # in kg
         else: #heavy barrels
-            BarrelWeight = 0.03*BarrelLenght # in kg
+            BarrelWeight = 0.03*BarrelLength # in kg
 
         # djusment for rotary weapons
         if RotaryWeapon == 1:
@@ -1286,7 +1306,7 @@ class Small_Arms_Calcs ():
         else: # heavy rifled barrels
             BarrelPrice = BarrelWeight*600 # in Credits
 
-        MuzzleEnergy = AverageMuzzleEnergy*(1+(0.5*((BarrelLenght/AverageBarrelLenght)-1)))
+        MuzzleEnergy = AverageMuzzleEnergy*(1+(0.5*((BarrelLength/AverageBarrelLength)-1)))
 
 
 #======================
@@ -1297,10 +1317,12 @@ class Small_Arms_Calcs ():
                          0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, \
                          0.4, 0.4, 0.4, 0.4, 0.4] # for TL 3-21
         
-        RecieverLenght = ReceiverTLMods[TechLevel-3]*math.sqrt(AverageMuzzleEnergy)
 
-        if RecieverLenght < AmmoLenght:
-            RecieverLenght = AmmoLenght
+        RecieverLength = ReceiverTLMods[TechLevel-3]*(math.sqrt(AverageMuzzleEnergy))
+
+        #ammo Length in mm receiver Length in cm
+        if RecieverLength < (10/AmmoLength):
+            RecieverLength = (10/AmmoLength)
 
 
         # checks for primer type then barrel type 
@@ -1355,19 +1377,19 @@ class Small_Arms_Calcs ():
 
 # in cm
         if StockType == "Wood pistol grip":
-            StockLenght = 0
+            StockLength = 0
         elif StockType == "Hollow pistol grip":
-            StockLenght = 0
+            StockLength = 0
         elif StockType == "Wooden stock":
-            StockLenght = 25
+            StockLength = 25
         elif StockType == "Carbine stock":
-            StockLenght = 25
+            StockLength = 25
         elif StockType == "Folding stock":
-            StockLenght = 25
+            StockLength = 25
         elif StockType == "Plastic stock":
-            StockLenght = 25
+            StockLength = 25
         else: #Bullpup rifle stock
-            StockLenght = 5
+            StockLength = 5
 
 # in kg
 
@@ -1535,10 +1557,10 @@ class Small_Arms_Calcs ():
 #======================
 
         if Grenade == 1:
-            GrenadeLenght = 5
+            GrenadeLength = 5
             GrenadePrice = 50
         else: #no adaptor
-            GrenadeLenght = 0
+            GrenadeLength = 0
             GrenadePrice = 0
 
 #======================
@@ -1724,14 +1746,14 @@ class Small_Arms_Calcs ():
         if MountType == "Vehicle":
             RangeConfigMod = 1.3
 
-        # barrel lenght range mod
+        # barrel Length range mod
 
-        if ((BarrelLenght/AverageBarrelLenght)-1) < 0: #negative values
+        if ((BarrelLength/AverageBarrelLength)-1) < 0: #negative values
             BarrelRangeModConstant = 1.2
         else: #positive values 
             BarrelRangeModConstant = 0.75
 
-        BarrelRangeMod = 1 + (((BarrelLenght/AverageBarrelLenght)-1)*BarrelRangeModConstant)
+        BarrelRangeMod = 1 + (((BarrelLength/AverageBarrelLength)-1)*BarrelRangeModConstant)
             
         #base range calcs
 
@@ -1887,25 +1909,25 @@ class Small_Arms_Calcs ():
             MountFinalTranqRange = int(round(MountFinalTranqRange,0))
 
 #======================
-#silencer lenght, weight price details
+#silencer Length, weight price details
 #======================
 
 
         if Silenced == 1:
-            SilencerLenght = MuzzleEnergy/25
-            SilencerWeight = 0.025 * SilencerLenght
-            SilencerPrice = 5 * SilencerLenght
+            SilencerLength = MuzzleEnergy/25
+            SilencerWeight = 0.025 * SilencerLength
+            SilencerPrice = 5 * SilencerLength
         else:
-            SilencerLenght = 0
+            SilencerLength = 0
             SilencerWeight = 0
             SilencerPrice = 0
 
         if Suppressor == 1:
-            SuppressorLenght = MuzzleEnergy/100
-            SuppressorWeight = 0.025 * SuppressorLenght
-            SuppressorPrice = 5 * SuppressorLenght
+            SuppressorLength = MuzzleEnergy/100
+            SuppressorWeight = 0.025 * SuppressorLength
+            SuppressorPrice = 5 * SuppressorLength
         else:
-            SuppressorLenght = 0
+            SuppressorLength = 0
             SuppressorWeight = 0
             SuppressorPrice = 0
 
@@ -1914,20 +1936,20 @@ class Small_Arms_Calcs ():
 #======================
 
         if FlashSuppressor == "Flash Suppressor":
-            FlashLenght = MuzzleEnergy/300
-            FlashWeight = 0.01 * FlashLenght
-            FlashPrice = 1 * FlashLenght
+            FlashLength = MuzzleEnergy/300
+            FlashWeight = 0.01 * FlashLength
+            FlashPrice = 1 * FlashLength
         elif FlashSuppressor == "Long Flash Suppressor":
-            FlashLenght = MuzzleEnergy/150
-            FlashWeight = 0.01 * FlashLenght
-            FlashPrice = 1 * FlashLenght
+            FlashLength = MuzzleEnergy/150
+            FlashWeight = 0.01 * FlashLength
+            FlashPrice = 1 * FlashLength
         else: # none fitted
-            FlashLenght = 0
+            FlashLength = 0
             FlashWeight = 0
             FlashPrice = 0
-        # if muzzle brake fitted take slonger lenght
-        if RecoilBrakeLength >= FlashLenght:
-            FlashLenght = 0
+        # if muzzle brake fitted take slonger Length
+        if RecoilBrakeLength >= FlashLength:
+            FlashLength = 0
         else: #flash supressor longer
             RecoilBrakeLength = 0
 
@@ -1935,9 +1957,9 @@ class Small_Arms_Calcs ():
 # Final values calculations
 #======================
 
-        FinalLenght = round(BarrelLenght + RecieverLenght + StockLenght + \
-                            GrenadeLenght + SilencerLenght + SuppressorLenght\
-                            + RecoilBrakeLength + FlashLenght, 1)
+        FinalLength = round(BarrelLength + RecieverLength + StockLength + \
+                            GrenadeLength + SilencerLength + SuppressorLength\
+                            + RecoilBrakeLength + FlashLength, 1)
         FinalEmptyWeight = round(BarrelWeight + ReceiverWeight + StockWeight \
                                  + MagazineEmptyWeight + SightMass + RecoilAbsorbWeight\
                                  + RecoilCompWeight + MountWeight + LaserSightMass\
@@ -2295,7 +2317,7 @@ class Small_Arms_Calcs ():
                                 15*math.pi*pow((AmmoDiameter/2),2) # in joules
 
         SilencedMuzzleEnergy = SilencedAverageMuzzleEnergy\
-                               *(1+(0.5*((BarrelLenght/AverageBarrelLenght)-1)))
+                               *(1+(0.5*((BarrelLength/AverageBarrelLength)-1)))
 
         # silenced weapon damage
 
@@ -2405,12 +2427,12 @@ class Small_Arms_Calcs ():
         else:
             AmmoBaseDiameter = int(AmmoDiameter)
 
-        if CartridgeLenght - int(CartridgeLenght) != 0:
-            BaseCartridgeLenght = CartridgeLenght
+        if CartridgeLength - int(CartridgeLength) != 0:
+            BaseCartridgeLength = CartridgeLength
         else:
-            BaseCartridgeLenght = int(CartridgeLenght)
+            BaseCartridgeLength = int(CartridgeLength)
 
-        AmmoBase = str(AmmoBaseDiameter)+'x'+str(BaseCartridgeLenght)+"mm"
+        AmmoBase = str(AmmoBaseDiameter)+'x'+str(BaseCartridgeLength)+"mm"
 
 
         NameLine = "Designation: " + WeaponName
@@ -2420,7 +2442,7 @@ class Small_Arms_Calcs ():
         else:
             AmmoLine = "Ammo: "+ AmmoBase +"-"+str(TechLevel)
         MuzzleLine = "Muzzle Energy: " + str(round(MuzzleEnergy,1)) + " joules"
-        WeaponLenghtLine = "Weapon Lenght: " + str(FinalLenght) + " cm"
+        WeaponLengthLine = "Weapon Length: " + str(FinalLength) + " cm"
         WeaponWeightLine = "Weapon Weight: " + str(FinalLoadedWeight) + " kg loaded, " + \
                            str(FinalEmptyWeight) + " kg empty (includes weight of empty "\
                            + MagazineType + ")"
@@ -2444,7 +2466,7 @@ class Small_Arms_Calcs ():
 #======================
 # damage table build up
 #======================
-        Bulk = str(int(round(FinalLenght/15,0)))
+        Bulk = str(int(round(FinalLength/15,0)))
         ShortRange = str(FinalShortRange) + "("+str(int(round(BaseShortRange,0)))+")"
         MountShortRange = str(int(round(MountFinalShortRange,0))) \
                           + "("+str(int(round(MountBaseShortRange,0)))+")"
@@ -2818,7 +2840,7 @@ class Small_Arms_Calcs ():
 #======================
 
         Small_Arms_Calcs.FinalDesign = NameLine + '\n' + TLLine + '\n' + AmmoLine + '\n' \
-                                          + MuzzleLine + '\n' + WeaponLenghtLine + '\n' + \
+                                          + MuzzleLine + '\n' + WeaponLengthLine + '\n' + \
                                           WeaponWeightLine + '\n' + WeaponPriceLine + '\n' + \
                                           MagazineWeightLine + '\n' + MagazinePriceLine + '\n' \
                                           + AmmunitionPriceLine + '\n' + AmmunitionWeightLine \
@@ -2826,11 +2848,14 @@ class Small_Arms_Calcs ():
                                           '\n' + DamageTableOutput
 
         Small_Arms_Calcs.AmmoWeight = AmmoWeight
-        Small_Arms_Calcs.RecieverLenght = RecieverLenght
-        Small_Arms_Calcs.AmmoLenght = AmmoLenght
-        Small_Arms_Calcs.BarrelLenght = BarrelLenght
-        Small_Arms_Calcs.StockLenght = StockLenght
+        Small_Arms_Calcs.RecieverLength = RecieverLength
+        Small_Arms_Calcs.AmmoLength = AmmoLength
+        Small_Arms_Calcs.BarrelLength = BarrelLength
+        Small_Arms_Calcs.StockLength = StockLength
         Small_Arms_Calcs.AverageMuzzleEnergy = AverageMuzzleEnergy
+        Small_Arms_Calcs.AmmoDiameter = AmmoDiameter
+        Small_Arms_Calcs.ShotgunBullets = ShotgunBullets
+        Small_Arms_Calcs.FlechetteDarts = FlechetteDarts
 
         
         
